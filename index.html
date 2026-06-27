@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Abhishek Jadhav — AI Engineer</title>
+  <meta name="description" content="AI Engineer building production agentic, RAG, and memory systems that stay reliable under real scale, latency, cost, and quality constraints." />
+  <meta property="og:title" content="Abhishek Jadhav — AI Engineer" />
+  <meta property="og:description" content="Production agentic AI, RAG, and memory systems. Explore a live attention visualizer and a real retrieval + reranking engine over my work." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='7' fill='%236EE7D8'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@1,9..144,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="field" aria-hidden="true"></div>
+
+  <!-- ============================= NAV ============================= -->
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <a href="#top" class="brand"><span class="dot"></span> Abhishek Jadhav</a>
+      <div class="nav-links" id="navLinks">
+        <a href="#attention">Attention</a>
+        <a href="#rag">RAG engine</a>
+        <a href="#experience">Experience</a>
+        <a href="#systems">Systems</a>
+        <a href="#work">Work</a>
+        <a href="#writing">Writing</a>
+      </div>
+      <a href="#contact" class="nav-cta">Get in touch</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">≡</button>
+    </div>
+  </nav>
+
+  <!-- ============================= HERO ============================ -->
+  <header class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">AI Engineer · Production systems</span>
+          <h1>I make AI systems<br>that <span class="soft">stay reliable</span><br>in production.</h1>
+          <p class="hero-sub" id="heroSub"></p>
+          <div class="hero-cta">
+            <a href="#attention" class="btn solid">Explore attention <span class="arr">→</span></a>
+            <a href="#rag" class="btn">Query my work with RAG <span class="arr">→</span></a>
+          </div>
+          <div class="hero-meta" id="heroMeta"></div>
+        </div>
+        <div class="hero-card">
+          <canvas id="consLines"></canvas>
+          <div class="constellation" id="constellation"></div>
+          <div class="cap mono">production-grade, not demo-grade</div>
+        </div>
+      </div>
+
+      <div class="metrics" id="metrics"></div>
+    </div>
+  </header>
+
+  <!-- ======================= ATTENTION EXPLORER ==================== -->
+  <section class="block" id="attention">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">01 — Attention</span>
+        <h2 class="section-title">A transformer, made legible</h2>
+        <p class="section-lede">Type a sentence. It gets tokenized, then each token decides how much to attend to every other token. Pick a head, pick a token, and watch the weights — the same mechanism every modern LLM runs, made visible.</p>
+      </div>
+
+      <div class="panel reveal">
+        <div class="panel-head">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <span class="panel-title">self_attention.explore()</span>
+        </div>
+        <div class="input-row">
+          <input type="text" id="tfInput" value="The agent retrieves context then reranks the results" maxlength="90" aria-label="Sentence to visualize" />
+          <button class="run-btn" id="tfRun">Tokenize</button>
+        </div>
+        <div class="chips" id="tfChips"></div>
+
+        <div class="tf-stage">
+          <div class="tf-tokens" id="tfTokens"></div>
+          <div class="tf-canvas-wrap">
+            <canvas id="tfCanvas"></canvas>
+          </div>
+          <div class="tf-legend">
+            <span><i style="background:var(--violet)"></i>strong attention</span>
+            <span><i style="background:var(--cyan);opacity:.5"></i>weak attention</span>
+            <span style="color:var(--mute)">hover or tap a token to isolate its attention</span>
+          </div>
+
+          <div class="tf-controls">
+            <label>head
+              <select id="tfHead">
+                <option value="0">head 1 · syntax</option>
+                <option value="1">head 2 · adjacency</option>
+                <option value="2">head 3 · semantic</option>
+                <option value="3">head 4 · global</option>
+              </select>
+            </label>
+            <label>layer depth
+              <input type="range" id="tfLayer" min="1" max="6" value="3" />
+              <span class="mono" id="tfLayerVal">3 / 6</span>
+            </label>
+          </div>
+
+          <div class="tf-arch" id="tfArch"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= RAG ENGINE ========================= -->
+  <section class="block" id="rag">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">02 — Retrieval</span>
+        <h2 class="section-title">Ask my career anything</h2>
+        <p class="section-lede">This runs a full retrieval pipeline in your browser — no server. Your question is embedded, scored against documents drawn from my real work, reranked with a cross-encoder-style pass, then synthesized into a grounded answer with citations. Watch each stage.</p>
+      </div>
+
+      <div class="panel reveal">
+        <div class="panel-head">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <span class="panel-title">rag_pipeline.run(query)</span>
+        </div>
+
+        <div class="input-row">
+          <input type="text" id="ragInput" value="How did you reduce cost and latency?" maxlength="120" aria-label="Question to ask" />
+          <button class="run-btn" id="ragRun">Run pipeline</button>
+        </div>
+        <div class="chips" id="ragChips"></div>
+
+        <div class="rag-pipeline">
+          <div class="stage-tab" data-stage="0">1 · Embed</div>
+          <div class="stage-tab" data-stage="1">2 · Retrieve</div>
+          <div class="stage-tab" data-stage="2">3 · Rerank</div>
+          <div class="stage-tab" data-stage="3">4 · Generate</div>
+        </div>
+
+        <div class="rag-body">
+          <div class="rag-col">
+            <h4>Retrieved · top-k by similarity</h4>
+            <div id="ragRetrieved"></div>
+          </div>
+          <div class="rag-col">
+            <h4>Reranked · cross-encoder pass</h4>
+            <div id="ragReranked"></div>
+          </div>
+        </div>
+
+        <div class="rag-answer">
+          <h4>Grounded answer</h4>
+          <div class="answer-text" id="ragAnswer">Run the pipeline to generate a grounded answer from the reranked documents.</div>
+          <div class="answer-note" id="ragNote"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= EXPERIENCE ========================= -->
+  <section class="block" id="experience">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">03 — Experience</span>
+        <h2 class="section-title">Where I've shipped</h2>
+        <p class="section-lede">Four years building data and AI systems that other people depend on — measured in cost saved, latency cut, and failures prevented.</p>
+      </div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+  </section>
+
+  <!-- ========================== SYSTEMS =========================== -->
+  <section class="block" id="systems">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">04 — Systems</span>
+        <h2 class="section-title">What I work across</h2>
+        <p class="section-lede">Organized the way a production AI system actually breaks down — not an alphabetical tool dump.</p>
+      </div>
+      <div class="skill-grid" id="skills"></div>
+    </div>
+  </section>
+
+  <!-- =========================== WORK ============================= -->
+  <section class="block" id="work">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">05 — Selected work</span>
+        <h2 class="section-title">Things I've built</h2>
+        <p class="section-lede">Open-source tools and applied systems across evaluation, memory, retrieval, and human-in-the-loop workflows.</p>
+      </div>
+      <div class="proj-grid" id="projects"></div>
+    </div>
+  </section>
+
+  <!-- ========================== WRITING =========================== -->
+  <section class="block" id="writing">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">06 — Writing</span>
+        <h2 class="section-title">Notes on agentic AI</h2>
+        <p class="section-lede">Practitioner writing on memory, context, and how agents decide what to do. Published on Medium and LinkedIn.</p>
+      </div>
+      <div class="art-grid" id="articles"></div>
+    </div>
+  </section>
+
+  <!-- ========================== CONTACT =========================== -->
+  <section class="contact" id="contact">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center">07 — Contact</span>
+      <h2>Let's build something <span class="soft">reliable.</span></h2>
+      <p id="contactLede"></p>
+      <div class="contact-links" id="contactLinks"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap foot-inner">
+      <span id="footLeft"></span>
+      <span class="mono">Built as a static site · runs entirely in your browser</span>
+    </div>
+  </footer>
+
+  <!-- scripts: classic (no build step), loaded in order -->
+  <script src="data.js"></script>
+  <script src="transformer.js"></script>
+  <script src="rag.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

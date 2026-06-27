@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 600" width="760" height="600" role="img" aria-labelledby="ttl desc" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace">
+  <title id="ttl">local-llm-service architecture</title>
+  <desc id="desc">A client calls the FastAPI service, which calls the Instructor-backed LLMService, which calls the local Ollama model. The LLMService re-prompts on invalid output and returns validated JSON back to the client.</desc>
+  <defs>
+    <marker id="accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#7c8cff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="mint" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#5fd0a8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#f0b860" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  </defs>
+  <style>
+    .t  { fill: #e6e8ef; font-size: 14px; }
+    .s  { fill: #8b90a3; font-size: 12px; }
+    .lbl{ fill: #8b90a3; font-size: 12px; }
+    .eye{ fill: #5b6072; font-size: 11px; letter-spacing: .16em; }
+    .box{ fill: #1b1e2a; stroke: #2c3142; stroke-width: 1; }
+    .accent { fill: #7c8cff; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="759" height="599" rx="16" fill="#14161f" stroke="#2c3142"/>
+  <text class="eye" x="40" y="46">LOCAL-LLM-SERVICE · ARCHITECTURE</text>
+
+  <rect class="box" x="210" y="80" width="300" height="60" rx="10"/>
+  <text class="t" x="228" y="108">Client</text>
+  <text class="s" x="228" y="126">Web UI · curl · SDK</text>
+
+  <rect class="box" x="210" y="200" width="300" height="60" rx="10"/>
+  <text class="t" x="228" y="228">FastAPI service</text>
+  <text class="s" x="228" y="246">request-id · CORS · auth · routers</text>
+
+  <rect class="box" x="210" y="320" width="300" height="60" rx="10"/>
+  <text class="t" x="228" y="348">LLMService · <tspan class="accent">Instructor</tspan></text>
+  <text class="s" x="228" y="366">Pydantic validate · retry</text>
+
+  <rect class="box" x="210" y="440" width="300" height="60" rx="10"/>
+  <text class="t" x="228" y="468">Ollama</text>
+  <text class="s" x="228" y="486">local quantized model · GGUF</text>
+
+  <line x1="360" y1="146" x2="360" y2="192" stroke="#7c8cff" stroke-width="1.5" marker-end="url(#accent)"/>
+  <line x1="360" y1="266" x2="360" y2="312" stroke="#7c8cff" stroke-width="1.5" marker-end="url(#accent)"/>
+  <line x1="360" y1="386" x2="360" y2="432" stroke="#7c8cff" stroke-width="1.5" marker-end="url(#accent)"/>
+
+  <text class="lbl" x="378" y="173">POST /v1/extract</text>
+  <text class="lbl" x="378" y="293">generate_structured()</text>
+  <text class="lbl" x="378" y="413">OpenAI-compatible /v1</text>
+
+  <path d="M210 338 C 180 338, 180 362, 210 362" fill="none" stroke="#f0b860" stroke-width="1.5" marker-end="url(#amber)"/>
+  <text class="lbl" x="172" y="354" text-anchor="end" fill="#f0b860">re-prompt on invalid</text>
+
+  <path d="M510 470 L 600 470 L 600 110 L 514 110" fill="none" stroke="#5fd0a8" stroke-width="1.5" marker-end="url(#mint)"/>
+  <text class="lbl" x="612" y="286" fill="#5fd0a8">validated</text>
+  <text class="lbl" x="612" y="302" fill="#5fd0a8">JSON</text>
+
+  <line x1="210" y1="556" x2="238" y2="556" stroke="#7c8cff" stroke-width="2"/>
+  <text class="s" x="246" y="560">request</text>
+  <line x1="330" y1="556" x2="358" y2="556" stroke="#5fd0a8" stroke-width="2"/>
+  <text class="s" x="366" y="560">validated response</text>
+  <line x1="520" y1="556" x2="548" y2="556" stroke="#f0b860" stroke-width="2"/>
+  <text class="s" x="556" y="560">retry loop</text>
+</svg>

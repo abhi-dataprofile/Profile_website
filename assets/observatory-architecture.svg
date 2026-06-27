@@ -1,0 +1,236 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 800" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B0E14"/>
+      <stop offset="1" stop-color="#0F131C"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#141A26"/>
+      <stop offset="1" stop-color="#0F131C"/>
+    </linearGradient>
+    <linearGradient id="signal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#B8841F"/>
+      <stop offset="1" stop-color="#F5A623"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#F5A623" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#F5A623" stop-opacity="0"/>
+    </radialGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#5C667C"/>
+    </marker>
+    <marker id="arrowAmber" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#F5A623"/>
+    </marker>
+    <marker id="arrowTeal" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#45D6C0"/>
+    </marker>
+    <style>
+      .title  { fill:#E8ECF4; font-size:26px; font-weight:700; letter-spacing:0.04em; }
+      .subtitle { fill:#939CB2; font-size:13px; letter-spacing:0.18em; }
+      .layer  { fill:#5C667C; font-size:11px; font-weight:700; letter-spacing:0.22em; }
+      .box-title { fill:#E8ECF4; font-size:15px; font-weight:600; }
+      .box-sub { fill:#939CB2; font-size:11.5px; }
+      .chip { fill:#C7CEDC; font-size:11px; font-family:ui-monospace,'SF Mono',Menlo,monospace; }
+      .edge-label { fill:#8B93A7; font-size:10.5px; font-family:ui-monospace,'SF Mono',Menlo,monospace; }
+      .amber { fill:#F5A623; }
+      .teal { fill:#45D6C0; }
+      .violet { fill:#9D8CFF; }
+      .coral { fill:#FF6B6B; }
+      .mono { font-family:ui-monospace,'SF Mono',Menlo,monospace; }
+    </style>
+  </defs>
+
+  <rect width="1240" height="800" fill="url(#bg)"/>
+  <ellipse cx="1050" cy="60" rx="420" ry="220" fill="url(#halo)"/>
+
+  <!-- header -->
+  <g transform="translate(48,40)">
+    <g transform="translate(0,-6)">
+      <circle cx="15" cy="15" r="15" fill="none" stroke="#F5A623" stroke-width="1.6" opacity="0.5"/>
+      <circle cx="15" cy="15" r="8" fill="none" stroke="#F5A623" stroke-width="1.6"/>
+      <circle cx="15" cy="15" r="2.6" fill="#FFD37A"/>
+      <line x1="15" y1="-3" x2="15" y2="2" stroke="#F5A623" stroke-width="1.6"/>
+      <line x1="15" y1="28" x2="15" y2="33" stroke="#F5A623" stroke-width="1.6"/>
+      <line x1="-3" y1="15" x2="2" y2="15" stroke="#F5A623" stroke-width="1.6"/>
+      <line x1="28" y1="15" x2="33" y2="15" stroke="#F5A623" stroke-width="1.6"/>
+    </g>
+    <text x="44" y="10" class="title">LLM OBSERVATORY</text>
+    <text x="45" y="30" class="subtitle">TRACING · METRICS · EVALUATION</text>
+  </g>
+  <text x="1192" y="52" text-anchor="end" class="chip" fill="#5C667C">self-hostable · SQLite or Postgres</text>
+  <line x1="48" y1="92" x2="1192" y2="92" stroke="#232C3D" stroke-width="1"/>
+
+  <!-- ============ LAYER LABELS ============ -->
+  <text x="48"  y="128" class="layer">INSTRUMENTATION</text>
+  <text x="360" y="128" class="layer">INGESTION &amp; QUERY</text>
+  <text x="900" y="128" class="layer">EVALUATION</text>
+
+  <!-- ============ 1. APPLICATION + SDK ============ -->
+  <g>
+    <rect x="48" y="146" width="244" height="300" rx="14" fill="url(#panel)" stroke="#232C3D"/>
+    <text x="70" y="178" class="box-title">Your Application</text>
+    <text x="70" y="198" class="box-sub">instrumented with the SDK</text>
+
+    <!-- SDK inner -->
+    <rect x="68" y="214" width="204" height="212" rx="10" fill="#0B0E14" stroke="#1C2433"/>
+    <text x="84" y="236" class="chip amber">observatory.sdk</text>
+
+    <rect x="84" y="248" width="172" height="34" rx="7" fill="#11151F" stroke="#232C3D"/>
+    <text x="96" y="269" class="chip">@observe()  decorator</text>
+
+    <rect x="84" y="288" width="172" height="34" rx="7" fill="#11151F" stroke="#232C3D"/>
+    <text x="96" y="309" class="chip">trace / span / generation</text>
+
+    <rect x="84" y="328" width="172" height="34" rx="7" fill="#11151F" stroke="#232C3D"/>
+    <text x="96" y="349" class="chip">cost accounting</text>
+
+    <rect x="84" y="368" width="172" height="44" rx="7" fill="#11151F" stroke="#2E3344"/>
+    <text x="96" y="386" class="chip teal">async batch queue</text>
+    <text x="96" y="402" class="box-sub" font-size="10">non-blocking · retries · drop-oldest</text>
+  </g>
+
+  <!-- edge: app -> ingest -->
+  <path d="M292 300 H348" fill="none" stroke="#F5A623" stroke-width="2" marker-end="url(#arrowAmber)"/>
+  <text x="298" y="288" class="edge-label amber">/ingest</text>
+  <text x="298" y="314" class="edge-label">events</text>
+
+  <!-- ============ 2. API ============ -->
+  <g>
+    <rect x="356" y="146" width="496" height="300" rx="14" fill="url(#panel)" stroke="#232C3D"/>
+    <text x="378" y="178" class="box-title">Ingestion &amp; Query API</text>
+    <text x="378" y="198" class="box-sub mono" font-size="11">FastAPI · session-per-request</text>
+
+    <!-- ingest -->
+    <rect x="376" y="214" width="222" height="100" rx="10" fill="#0B0E14" stroke="#1C2433"/>
+    <text x="392" y="236" class="chip amber">write path</text>
+    <text x="392" y="258" class="box-sub">POST /api/v1/ingest</text>
+    <rect x="392" y="268" width="190" height="16" rx="4" fill="#11151F"/>
+    <text x="398" y="280" class="chip" font-size="10">idempotent upsert on id</text>
+    <rect x="392" y="290" width="190" height="16" rx="4" fill="#11151F"/>
+    <text x="398" y="302" class="chip" font-size="10">SAVEPOINT per-event isolation</text>
+
+    <!-- query -->
+    <rect x="610" y="214" width="226" height="100" rx="10" fill="#0B0E14" stroke="#1C2433"/>
+    <text x="626" y="236" class="chip teal">read path</text>
+    <text x="626" y="258" class="box-sub">GET /traces · /metrics · /scores</text>
+    <rect x="626" y="268" width="194" height="16" rx="4" fill="#11151F"/>
+    <text x="632" y="280" class="chip" font-size="10">filters · pagination · sort</text>
+    <rect x="626" y="290" width="194" height="16" rx="4" fill="#11151F"/>
+    <text x="632" y="302" class="chip" font-size="10">p50/p95/p99 · cost rollups</text>
+
+    <!-- auth + health strip -->
+    <rect x="376" y="326" width="460" height="44" rx="10" fill="#0B0E14" stroke="#1C2433"/>
+    <text x="392" y="344" class="chip violet">cross-cutting</text>
+    <text x="392" y="361" class="box-sub" font-size="10.5">API-key auth · /health · /ready · global error handler · CORS</text>
+
+    <!-- auto-eval hook -->
+    <rect x="376" y="382" width="460" height="44" rx="10" fill="#0B0E14" stroke="#1C2433"/>
+    <text x="392" y="400" class="chip amber">optional inline auto-eval</text>
+    <text x="392" y="417" class="box-sub" font-size="10.5">run online evaluators on ingest when OBSERVATORY_AUTO_EVAL=true</text>
+  </g>
+
+  <!-- edge: api <-> storage -->
+  <path d="M604 446 V470 H636" fill="none" stroke="#5C667C" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="612" y="463" class="edge-label">SQL</text>
+
+  <!-- edge: api -> eval (offline run) -->
+  <path d="M852 320 H892" fill="none" stroke="#5C667C" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="846" y="310" class="edge-label">/evals/run</text>
+
+  <!-- ============ 3. EVAL ENGINE ============ -->
+  <g>
+    <rect x="896" y="146" width="296" height="300" rx="14" fill="url(#panel)" stroke="#232C3D"/>
+    <text x="918" y="178" class="box-title">Evaluation Engine</text>
+    <text x="918" y="198" class="box-sub">pure evaluators · deterministic scores</text>
+
+    <rect x="916" y="214" width="256" height="120" rx="10" fill="#0B0E14" stroke="#1C2433"/>
+    <text x="932" y="236" class="chip teal">heuristics — every trace</text>
+    <text x="932" y="256" class="box-sub" font-size="10.5">output non-empty · JSON validity</text>
+    <text x="932" y="273" class="box-sub" font-size="10.5">PII leak · refusal detection</text>
+    <text x="932" y="290" class="box-sub" font-size="10.5">latency SLA · cost budget guards</text>
+    <text x="932" y="319" class="chip" font-size="10" fill="#5C667C">BOOLEAN 1.0 = pass  →  pass-rate</text>
+
+    <rect x="916" y="344" width="256" height="60" rx="10" fill="#0B0E14" stroke="#1C2433"/>
+    <text x="932" y="366" class="chip amber">LLM-as-judge — pluggable</text>
+    <text x="932" y="386" class="box-sub" font-size="10.5">1–5 quality scale → normalized 0–1</text>
+
+    <rect x="916" y="412" width="256" height="20" rx="6" fill="#11151F"/>
+    <text x="932" y="426" class="chip" font-size="10">uuid5(trace+evaluator+name) · no dupes</text>
+  </g>
+
+  <!-- eval writes scores back to storage -->
+  <path d="M1044 446 V486 H700" fill="none" stroke="#45D6C0" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrowTeal)"/>
+  <text x="1052" y="466" class="edge-label teal">writes Score rows</text>
+
+  <!-- ============ STORAGE ============ -->
+  <text x="48" y="528" class="layer">STORAGE — data model</text>
+  <g>
+    <rect x="48" y="544" width="804" height="210" rx="14" fill="url(#panel)" stroke="#232C3D"/>
+    <text x="70" y="576" class="box-title">Database</text>
+    <text x="70" y="596" class="box-sub mono" font-size="11">SQLite (WAL, FK on, busy-timeout) · Postgres (pooled, pre-ping)</text>
+
+    <!-- entity boxes -->
+    <g class="mono">
+      <!-- Project -->
+      <rect x="72" y="612" width="118" height="40" rx="8" fill="#11151F" stroke="#3a2f12"/>
+      <text x="86" y="630" class="chip amber">Project</text>
+      <text x="86" y="645" class="box-sub" font-size="9.5">keys · settings</text>
+
+      <!-- Trace -->
+      <rect x="232" y="612" width="150" height="64" rx="8" fill="#11151F" stroke="#1C2433"/>
+      <text x="246" y="630" class="chip teal">Trace</text>
+      <text x="246" y="645" class="box-sub" font-size="9.5">name · user · session</text>
+      <text x="246" y="660" class="box-sub" font-size="9.5">cost · tokens · latency</text>
+      <text x="246" y="672" class="box-sub" font-size="9" fill="#5C667C">denormalized rollups</text>
+
+      <!-- Observation -->
+      <rect x="424" y="600" width="150" height="48" rx="8" fill="#11151F" stroke="#1C2433"/>
+      <text x="438" y="618" class="chip violet">Observation</text>
+      <text x="438" y="633" class="box-sub" font-size="9.5">SPAN · GENERATION</text>
+      <text x="438" y="645" class="box-sub" font-size="9" fill="#5C667C">self-referential tree</text>
+
+      <!-- Score -->
+      <rect x="424" y="656" width="150" height="42" rx="8" fill="#11151F" stroke="#1C2433"/>
+      <text x="438" y="674" class="chip coral">Score</text>
+      <text x="438" y="688" class="box-sub" font-size="9.5">numeric / boolean / cat.</text>
+
+      <!-- Dataset -->
+      <rect x="616" y="612" width="150" height="64" rx="8" fill="#11151F" stroke="#1C2433"/>
+      <text x="630" y="630" class="chip">Dataset</text>
+      <text x="630" y="645" class="box-sub" font-size="9.5">Item · Run</text>
+      <text x="630" y="660" class="box-sub" font-size="9.5">offline eval sets</text>
+      <text x="630" y="672" class="box-sub" font-size="9" fill="#5C667C">expected outputs</text>
+    </g>
+
+    <!-- relationship arrows -->
+    <path d="M190 632 H228" fill="none" stroke="#5C667C" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <path d="M382 638 H420" fill="none" stroke="#5C667C" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <path d="M382 660 H420" fill="none" stroke="#5C667C" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <text x="196" y="627" class="edge-label" font-size="9">1·N</text>
+    <text x="388" y="633" class="edge-label" font-size="9">1·N</text>
+
+    <text x="560" y="722" class="box-sub" font-size="9.5" fill="#5C667C">cascade-on-delete · UTC timestamps · USD cost  </text>
+  </g>
+
+  <!-- ============ DASHBOARD ============ -->
+  <text x="900" y="528" class="layer">PRESENTATION</text>
+  <g>
+    <rect x="896" y="544" width="296" height="210" rx="14" fill="url(#panel)" stroke="#232C3D"/>
+    <text x="918" y="576" class="box-title">Dashboard</text>
+    <text x="918" y="596" class="box-sub">zero-dependency SPA · served by the API</text>
+
+    <rect x="916" y="612" width="256" height="30" rx="7" fill="#0B0E14" stroke="#1C2433"/>
+    <text x="930" y="631" class="chip teal">Overview — KPIs · "The Sky"</text>
+    <rect x="916" y="648" width="256" height="30" rx="7" fill="#0B0E14" stroke="#1C2433"/>
+    <text x="930" y="667" class="chip amber">Traces — filter · waterfall</text>
+    <rect x="916" y="684" width="256" height="30" rx="7" fill="#0B0E14" stroke="#1C2433"/>
+    <text x="930" y="703" class="chip violet">Evaluations — pass-rates</text>
+    <text x="918" y="736" class="box-sub" font-size="10" fill="#5C667C">hand-rolled SVG charts · no CDN, no build</text>
+  </g>
+
+  <!-- dashboard reads from query api -->
+  <path d="M896 470 H700 V544" fill="none" stroke="#45D6C0" stroke-width="1.6" marker-end="url(#arrowTeal)" opacity="0.0"/>
+  <path d="M1044 544 V520 H700 V470" fill="none" stroke="#5C667C" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="1052" y="536" class="edge-label">GET /api/v1/*</text>
+</svg>

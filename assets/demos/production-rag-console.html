@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Summit Ridge · GC Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12141A; --panel:#1A1D26; --panel-2:#21242F; --line:#2A2E3A;
+    --text:#E8E6E1; --muted:#8A8F9C; --faint:#5A5F6C;
+    --amber:#E0A458; --teal:#5BC0BE; --coral:#E27D60;
+    --grad: linear-gradient(120deg,var(--amber),var(--teal));
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --disp:'Space Grotesk',sans-serif; --body:'Inter',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:
+      radial-gradient(900px 500px at 85% -10%, rgba(91,192,190,.10), transparent 60%),
+      radial-gradient(700px 400px at -5% 110%, rgba(224,164,88,.10), transparent 55%),
+      var(--ink);
+    color:var(--text); font-family:var(--body); font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:28px 22px 80px}
+  header{display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap}
+  .brand{font-family:var(--disp); font-weight:700; font-size:22px; letter-spacing:-.02em; display:flex; align-items:center; gap:11px}
+  .dot{width:11px;height:11px;border-radius:50%;background:var(--grad); box-shadow:0 0 16px rgba(224,164,88,.5)}
+  .sub{font-family:var(--mono); font-size:12px; color:var(--muted)}
+  .status{font-family:var(--mono); font-size:12px; color:var(--muted); display:flex; align-items:center; gap:7px}
+  .status .led{width:8px;height:8px;border-radius:50%;background:var(--faint)}
+  .status.live .led{background:var(--teal); box-shadow:0 0 10px var(--teal)}
+  .status.demo .led{background:var(--amber); box-shadow:0 0 10px var(--amber)}
+  .tagline{font-family:var(--mono); font-size:12.5px; color:var(--faint); margin:2px 0 22px}
+
+  .rail{display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:center;
+        background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 20px; margin-bottom:20px}
+  .stage{display:flex; flex-direction:column; gap:6px}
+  .stage .k{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint)}
+  .stage .v{font-family:var(--disp); font-weight:600; font-size:15px; color:var(--muted); transition:color .25s}
+  .stage .meta{font-family:var(--mono); font-size:11px; color:var(--faint); min-height:14px; transition:color .25s}
+  .stage.on .v{color:var(--text)} .stage.on .k{color:var(--amber)} .stage.on .meta{color:var(--teal)}
+  .stage .bar{height:2px; width:100%; background:var(--line); border-radius:2px; overflow:hidden; margin-top:2px}
+  .stage .bar i{display:block; height:100%; width:0; background:var(--grad); transition:width .5s ease}
+  .stage.on .bar i{width:100%}
+  .conn{width:34px; height:2px; background:var(--line); position:relative; margin:0 6px; margin-top:20px}
+  .conn::after{content:""; position:absolute; inset:0; width:0; background:var(--grad); transition:width .4s ease}
+  .conn.on::after{width:100%}
+
+  .ask{display:flex; gap:10px; margin-bottom:14px}
+  .ask textarea{flex:1; resize:none; min-height:52px; max-height:160px; padding:14px 16px; background:var(--panel);
+    border:1px solid var(--line); border-radius:12px; color:var(--text); font-family:var(--body); font-size:15px; line-height:1.5; outline:none; transition:border-color .2s}
+  .ask textarea:focus{border-color:var(--amber)}
+  .ask textarea::placeholder{color:var(--faint)}
+  button.send{align-self:stretch; padding:0 22px; border:none; border-radius:12px; cursor:pointer; background:var(--grad);
+    color:#15171d; font-family:var(--disp); font-weight:700; font-size:14px; transition:filter .15s, transform .05s}
+  button.send:hover{filter:brightness(1.07)} button.send:active{transform:translateY(1px)}
+  button.send:disabled{filter:grayscale(.6) brightness(.7); cursor:not-allowed}
+  .chips{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px}
+  .chip{font-family:var(--mono); font-size:12px; color:var(--muted); background:var(--panel); border:1px solid var(--line);
+    border-radius:20px; padding:6px 12px; cursor:pointer; transition:.15s}
+  .chip:hover{border-color:var(--amber); color:var(--text)}
+
+  .grid{display:grid; grid-template-columns:1.5fr 1fr; gap:18px; align-items:start}
+  @media (max-width:860px){ .grid{grid-template-columns:1fr} .rail{grid-template-columns:1fr; gap:14px} .conn{display:none} .stage .bar{display:none} }
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 20px}
+  .card .h{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
+  .card h2{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); margin:0; font-weight:500}
+  .answer{font-size:15px; line-height:1.68; min-height:60px; white-space:pre-wrap}
+  .answer .cite{font-family:var(--mono); font-size:12px; color:var(--teal); background:rgba(91,192,190,.10);
+    border:1px solid rgba(91,192,190,.25); border-radius:5px; padding:0 5px; margin:0 1px}
+  .cursor{display:inline-block; width:8px; height:18px; background:var(--amber); margin-left:2px; vertical-align:text-bottom; animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .empty{color:var(--faint); font-family:var(--mono); font-size:13px}
+
+  .pin{font-family:var(--mono); font-size:11px; color:var(--muted); background:transparent; border:1px solid var(--line);
+    border-radius:7px; padding:4px 9px; cursor:pointer; transition:.15s; white-space:nowrap}
+  .pin:hover{border-color:var(--teal); color:var(--teal)}
+  .pin.saved{border-color:var(--teal); color:var(--teal); opacity:.6; cursor:default}
+
+  .src{border:1px solid var(--line); border-radius:10px; padding:11px 12px; margin-bottom:10px; background:var(--panel-2); cursor:pointer; transition:border-color .15s}
+  .src:last-child{margin-bottom:0} .src:hover{border-color:var(--amber)}
+  .src .top{display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:7px}
+  .src .name{font-family:var(--mono); font-size:11.5px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:6px}
+  .src .name .file{color:var(--amber)}
+  .src .score{font-family:var(--mono); font-size:11px; color:var(--amber); flex:none}
+  .src .meter{height:3px; background:var(--line); border-radius:3px; overflow:hidden; margin-bottom:8px}
+  .src .meter i{display:block; height:100%; width:0; background:var(--grad); transition:width .6s ease}
+  .src .prev{font-size:12px; color:var(--muted); line-height:1.5; max-height:50px; overflow:hidden}
+  .src .actions{display:flex; justify-content:space-between; align-items:center; margin-top:8px}
+  .src .hint{font-family:var(--mono); font-size:10.5px; color:var(--faint)}
+
+  /* Memory + strategy workspace */
+  .work{margin-top:22px}
+  .work .head{display:flex; align-items:baseline; gap:10px; margin-bottom:12px}
+  .work .head h2{font-family:var(--disp); font-weight:600; font-size:17px; margin:0}
+  .work .head span{font-family:var(--mono); font-size:11.5px; color:var(--faint)}
+  .mem-grid{display:grid; grid-template-columns:1fr 1.4fr; gap:18px; align-items:start}
+  @media (max-width:860px){ .mem-grid{grid-template-columns:1fr} }
+  .mem-list{display:flex; flex-direction:column; gap:9px; min-height:40px}
+  .mem-item{background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; position:relative}
+  .mem-item .lbl{font-family:var(--mono); font-size:11px; color:var(--teal); margin-bottom:4px}
+  .mem-item .txt{font-size:12px; color:var(--muted); line-height:1.45; max-height:46px; overflow:hidden}
+  .mem-item .rm{position:absolute; top:8px; right:9px; cursor:pointer; color:var(--faint); font-size:14px; line-height:1; background:none; border:none}
+  .mem-item .rm:hover{color:var(--coral)}
+  .strat-chips{display:flex; gap:7px; flex-wrap:wrap; margin-bottom:10px}
+  .strat textarea{width:100%; resize:none; min-height:46px; padding:12px 14px; background:var(--panel); border:1px solid var(--line);
+    border-radius:11px; color:var(--text); font-family:var(--body); font-size:14px; outline:none; margin-bottom:10px}
+  .strat textarea:focus{border-color:var(--teal)}
+  .strat .run{padding:9px 18px; border:none; border-radius:10px; cursor:pointer; background:var(--teal); color:#0c1716;
+    font-family:var(--disp); font-weight:700; font-size:13px}
+  .strat .run:disabled{filter:grayscale(.6) brightness(.7); cursor:not-allowed}
+  .strat-out{margin-top:14px; background:var(--panel-2); border:1px solid var(--line); border-radius:11px; padding:16px;
+    font-size:14px; line-height:1.62; white-space:pre-wrap; min-height:30px}
+  .strat-out:empty{display:none}
+
+  /* Document viewer overlay */
+  .overlay{position:fixed; inset:0; background:rgba(8,9,13,.7); display:none; align-items:center; justify-content:center; padding:24px; z-index:50}
+  .overlay.open{display:flex}
+  .viewer{background:var(--panel); border:1px solid var(--line); border-radius:14px; width:min(760px,100%); max-height:86vh; display:flex; flex-direction:column}
+  .viewer .vh{display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--line)}
+  .viewer .vh .fn{font-family:var(--mono); font-size:13px; color:var(--amber)}
+  .viewer .vh .x{cursor:pointer; color:var(--muted); background:none; border:none; font-size:20px; line-height:1}
+  .viewer .vh .x:hover{color:var(--text)}
+  .viewer .vbody{padding:18px 22px; overflow:auto; font-size:13.5px; line-height:1.62; white-space:pre-wrap; color:var(--text)}
+  .viewer .vbody .empty{padding:20px 0}
+
+  footer{margin-top:30px; font-family:var(--mono); font-size:11.5px; color:var(--faint); display:flex; gap:18px; flex-wrap:wrap}
+  footer b{color:var(--muted); font-weight:500}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><span class="dot"></span>Summit Ridge <span class="sub">/ GC console</span></div>
+    <div class="status" id="status"><span class="led"></span><span id="statusText">checking API…</span></div>
+  </header>
+  <div class="tagline">ask across RFIs · change orders · safety · schedule · contracts — then pin records and strategize</div>
+
+  <div class="rail" id="rail">
+    <div class="stage" data-stage="retrieve"><span class="k">01 · retrieve</span><span class="v">Hybrid search</span><span class="meta" id="m-retrieve">dense + BM25</span><span class="bar"><i></i></span></div>
+    <div class="conn" data-conn="1"></div>
+    <div class="stage" data-stage="rerank"><span class="k">02 · rerank</span><span class="v">Cross-encoder</span><span class="meta" id="m-rerank">Cohere</span><span class="bar"><i></i></span></div>
+    <div class="conn" data-conn="2"></div>
+    <div class="stage" data-stage="generate"><span class="k">03 · generate</span><span class="v">Grounded LLM</span><span class="meta" id="m-generate">cited answer</span><span class="bar"><i></i></span></div>
+  </div>
+
+  <div class="ask">
+    <textarea id="q" placeholder="Ask about the project — e.g. which open RFIs are blocking the schedule?" rows="1"></textarea>
+    <button class="send" id="send">Ask</button>
+  </div>
+  <div class="chips" id="chips"></div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="h"><h2>Answer</h2><button class="pin" id="pinAnswer" style="display:none">+ pin answer</button></div>
+      <div class="answer" id="answer"><span class="empty">Ask a question. The grounded answer streams in with citations.</span></div>
+    </div>
+    <div class="card">
+      <div class="h"><h2>Retrieved sources · relevance</h2></div>
+      <div id="sources"><span class="empty">Reranked records appear here. Click any to open the file and verify it.</span></div>
+    </div>
+  </div>
+
+  <div class="work">
+    <div class="head"><h2>Memory &amp; strategy</h2><span id="memCount">0 pinned</span></div>
+    <div class="mem-grid">
+      <div>
+        <div class="mem-list" id="memList"><span class="empty">Pin answers or source records to build working memory.</span></div>
+      </div>
+      <div class="strat">
+        <div class="strat-chips" id="stratChips"></div>
+        <textarea id="directive" placeholder="What should the system do with the pinned records? e.g. draft a schedule-recovery plan"></textarea>
+        <button class="run" id="runStrat" disabled>Strategize from memory</button>
+        <div class="strat-out" id="stratOut"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span><b>endpoints</b> /query · /document · /strategize</span>
+    <span><b>project</b> Summit Ridge Medical Center</span>
+    <span id="modeNote"></span>
+  </footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="viewer">
+    <div class="vh"><span class="fn" id="viewerName"></span><button class="x" id="viewerClose">×</button></div>
+    <div class="vbody" id="viewerBody"></div>
+  </div>
+</div>
+
+<script>
+const API = "http://localhost:8000";
+const EXAMPLES = [
+  "Which open RFIs are blocking the schedule?",
+  "Total approved change-order cost and revised contract sum?",
+  "Why is the imaging-suite slab on hold?",
+  "What OSHA recordable injuries happened this year?"
+];
+const STRAT_PRESETS = [
+  "Draft a schedule-recovery plan",
+  "Prep owner-meeting talking points",
+  "Quantify our cost & schedule exposure",
+  "List what to escalate and to whom"
+];
+
+let liveMode = false;
+let memory = [];
+let lastAnswer = null;
+const el = (id) => document.getElementById(id);
+const fileName = (s) => (s||"").split("/").pop();
+
+// ---- pipeline rail ----
+function resetRail(){ document.querySelectorAll('.stage').forEach(s=>s.classList.remove('on')); document.querySelectorAll('.conn').forEach(c=>c.classList.remove('on')); }
+function lightStage(name){
+  const s=document.querySelector(`.stage[data-stage="${name}"]`); if(s) s.classList.add('on');
+  if(name==='rerank') el('rail').querySelector('[data-conn="1"]').classList.add('on');
+  if(name==='generate') el('rail').querySelector('[data-conn="2"]').classList.add('on');
+}
+const renderCitations = (t)=> t.replace(/\[(\d+)\]/g,'<span class="cite">[$1]</span>');
+
+// ---- sources ----
+function renderSources(sources){
+  const box = el('sources');
+  if(!sources.length){ box.innerHTML='<span class="empty">No records retrieved.</span>'; return; }
+  box.innerHTML = sources.map((s,i)=>{
+    const pct = Math.round(Math.max(0,Math.min(1,s.score))*100);
+    return `<div class="src" data-src="${encodeURIComponent(s.source)}" data-i="${i}">
+      <div class="top"><span class="name">[${i+1}] <span class="file">${fileName(s.source)}</span></span><span class="score">${s.score.toFixed(3)}</span></div>
+      <div class="meter"><i style="width:${pct}%"></i></div>
+      <div class="prev">${(s.preview||'').replace(/</g,'&lt;')}</div>
+      <div class="actions"><span class="hint">click to open file</span>
+        <button class="pin" data-pin="${i}">+ pin</button></div>
+    </div>`;
+  }).join('');
+  box.querySelectorAll('.src').forEach(card=>{
+    card.addEventListener('click',(e)=>{ if(e.target.closest('.pin')) return; openDoc(decodeURIComponent(card.dataset.src)); });
+  });
+  box.querySelectorAll('.pin').forEach(btn=>{
+    btn.addEventListener('click',()=>{ const s=sources[+btn.dataset.pin];
+      pinItem(fileName(s.source), s.source, s.preview); btn.classList.add('saved'); btn.textContent='pinned'; });
+  });
+}
+
+// ---- document viewer ----
+async function openDoc(source){
+  el('overlay').classList.add('open');
+  el('viewerName').textContent = fileName(source);
+  el('viewerBody').innerHTML = '<span class="empty">loading…</span>';
+  let text = null;
+  if(liveMode){
+    try{ const r=await fetch(`${API}/document?source=${encodeURIComponent(source)}`); if(r.ok){ text=(await r.json()).content; } }catch(e){}
+  }
+  if(text===null) text = DEMO_DOCS[fileName(source)] || null;
+  el('viewerBody').textContent = text!==null ? text : 'Document not available in demo mode. Start the API to view the full file.';
+}
+el('viewerClose').addEventListener('click',()=>el('overlay').classList.remove('open'));
+el('overlay').addEventListener('click',(e)=>{ if(e.target===el('overlay')) el('overlay').classList.remove('open'); });
+
+// ---- memory ----
+function pinItem(label, source, text){
+  if(memory.some(m=>m.label===label && m.text===text)) return;
+  memory.push({label, source, text});
+  renderMemory();
+}
+function renderMemory(){
+  const list = el('memList');
+  el('memCount').textContent = `${memory.length} pinned`;
+  el('runStrat').disabled = memory.length===0;
+  if(!memory.length){ list.innerHTML='<span class="empty">Pin answers or source records to build working memory.</span>'; return; }
+  list.innerHTML = memory.map((m,i)=>`<div class="mem-item">
+    <button class="rm" data-rm="${i}">×</button>
+    <div class="lbl">${m.label}</div>
+    <div class="txt">${(m.text||'').replace(/</g,'&lt;')}</div></div>`).join('');
+  list.querySelectorAll('.rm').forEach(b=>b.addEventListener('click',()=>{ memory.splice(+b.dataset.rm,1); renderMemory(); }));
+}
+
+// ---- ask (query) ----
+async function ask(question){
+  if(!question.trim()) return;
+  el('send').disabled=true; el('pinAnswer').style.display='none'; lastAnswer=null;
+  resetRail(); el('answer').innerHTML=''; el('sources').innerHTML='<span class="empty">retrieving…</span>'; lightStage('retrieve');
+  let answerText='';
+  const paint=()=>{ el('answer').innerHTML=renderCitations(answerText)+'<span class="cursor"></span>'; };
+  const handle=(evt)=>{
+    if(evt.type==='sources'){ lightStage('rerank'); renderSources(evt.sources||[]); el('m-retrieve').textContent=`${(evt.sources||[]).length} fused`; }
+    else if(evt.type==='token'){ lightStage('generate'); answerText+=evt.token; paint(); }
+    else if(evt.type==='done'){ el('answer').innerHTML=renderCitations(answerText);
+      lastAnswer={q:question, a:answerText}; el('pinAnswer').style.display=''; }
+  };
+  try{
+    if(!liveMode) throw new Error('demo');
+    const res=await fetch(`${API}/query`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,stream:true})});
+    await readSSE(res, handle);
+  }catch(e){ await simulateQA(question, handle); }
+  finally{ el('send').disabled=false; }
+}
+el('pinAnswer').addEventListener('click',()=>{ if(lastAnswer){ pinItem(`Answer: ${lastAnswer.q.slice(0,46)}`, '', lastAnswer.a);
+  el('pinAnswer').textContent='pinned'; el('pinAnswer').classList.add('saved'); setTimeout(()=>{el('pinAnswer').textContent='+ pin answer'; el('pinAnswer').classList.remove('saved');},1200); }});
+
+// ---- strategize ----
+async function runStrategy(){
+  const directive = el('directive').value.trim();
+  if(!directive || !memory.length) return;
+  el('runStrat').disabled=true; el('stratOut').textContent='';
+  let out='';
+  const paint=()=>{ el('stratOut').innerHTML=renderCitations(out)+'<span class="cursor"></span>'; };
+  const handle=(evt)=>{ if(evt.type==='token'){ out+=evt.token; paint(); } else if(evt.type==='done'){ el('stratOut').innerHTML=renderCitations(out); } };
+  try{
+    if(!liveMode) throw new Error('demo');
+    const res=await fetch(`${API}/strategize`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({directive, memory: memory.map(m=>({label:m.label, source:m.source, text:m.text})), stream:true})});
+    await readSSE(res, handle);
+  }catch(e){ await simulateStrategy(directive, handle); }
+  finally{ el('runStrat').disabled = memory.length===0; }
+}
+
+// ---- SSE reader ----
+async function readSSE(res, handle){
+  const reader=res.body.getReader(); const dec=new TextDecoder(); let buf='';
+  while(true){ const {done,value}=await reader.read(); if(done) break; buf+=dec.decode(value,{stream:true});
+    let nl; while((nl=buf.indexOf('\n\n'))>=0){ const line=buf.slice(0,nl).trim(); buf=buf.slice(nl+2);
+      if(line.startsWith('data:')) handle(JSON.parse(line.slice(5).trim())); } }
+}
+
+// ---- demo data (offline) ----
+const DEMO_QA = {
+  "which open rfis are blocking the schedule?":{
+    sources:[
+      {source:"rfis/06-rfi-log.md",score:0.95,preview:"Schedule-critical open RFIs: RFI-019 (slab elevation) and RFI-017 (fire penetration). Both escalated at OAC meeting #12…"},
+      {source:"rfis/07-rfi-017-fire-penetration.md",score:0.82,preview:"RFI-017 is blocking the MEP rough-in inspection on Levels 1-3; the inspector flagged corridor penetrations as non-conforming…"},
+      {source:"rfis/08-rfi-019-slab-elevation.md",score:0.78,preview:"RFI-019 is on the critical path. The imaging-suite slab cannot be placed until the elevation conflict is resolved…"}
+    ],
+    answer:"Two open RFIs are blocking the schedule. RFI-017 (fire-rated corridor penetration detail) is holding the MEP rough-in inspection and corridor wall closure on Levels 1-3, because the inspector flagged the firestop assembly as non-conforming to the 2-hour rating [2]. RFI-019 (imaging-suite slab elevation mismatch) is on the critical path: the slab can't be placed until the 100'-0\" vs 99'-6\" conflict is resolved, which also gates the MRI sequence [3]. Both were escalated at OAC meeting #12 with a committed 7-day architect response [1]."
+  },
+  "total approved change-order cost and revised contract sum?":{
+    sources:[
+      {source:"change-orders/11-change-order-log.md",score:0.96,preview:"Approved cost impact: +$1,298,000 (CO-001 through CO-005). Revised contract sum (approved): $49,798,000…"},
+      {source:"project/05-pay-application-06.md",score:0.64,preview:"Net change by approved change orders: +$1,298,000. Revised contract sum: $49,798,000…"}
+    ],
+    answer:"Approved change orders CO-001 through CO-005 total +$1,298,000, raising the contract sum from $48,500,000 to a revised $49,798,000 [1]. Two further change orders are still pending — CO-006 (rooftop solar, +$340,000) and CO-007 (winter conditions, +$52,000) — for an additional $392,000 not yet in the contract sum [1]."
+  },
+  "why is the imaging-suite slab on hold?":{
+    sources:[
+      {source:"rfis/08-rfi-019-slab-elevation.md",score:0.97,preview:"Structural drawings show the slab at 100'-0\" but the MRI requires a recessed slab at 99'-6\". These elevations conflict…"},
+      {source:"change-orders/12-co-003-mri-electrical.md",score:0.7,preview:"The owner added a second MRI imaging room… the MRI base requires a recessed slab (RFI-019)…"}
+    ],
+    answer:"The imaging-suite slab is on hold because of RFI-019: the structural drawings put the slab at 100'-0\", but the MRI equipment needs a recessed slab at 99'-6\" for the magnet base and shielding, and that conflict must be resolved before placement [1]. The added MRI room came from change order CO-003, an owner-directed scope addition, so this is downstream of that change [2]."
+  },
+  "default":{
+    sources:[
+      {source:"project/01-project-overview.md",score:0.83,preview:"Summit Ridge Medical Center — 4-story, 120,000 SF medical office and outpatient surgery center… ~45% complete…"},
+      {source:"project/04-schedule-and-delays.md",score:0.6,preview:"Current forecast substantial completion: July 6, 2026 (~21 days late) absent recovery measures…"}
+    ],
+    answer:"This demo answers from a synthetic Summit Ridge Medical Center knowledge base — RFIs, change orders, schedule, safety, and contracts for a GC [1][2]. Try an example question, click a source to open the file, then pin records and strategize. (Demo mode — start the API for live answers over your own project records.)"
+  }
+};
+const DEMO_DOCS = {
+  "06-rfi-log.md":"# RFI Log — Summit Ridge Medical Center\n\nOpen RFIs: RFI-008, RFI-014, RFI-017, RFI-019.\nClosed RFIs: RFI-011, RFI-021.\nSchedule-critical open RFIs: RFI-019 (slab elevation) and RFI-017 (fire penetration). Both were escalated at OAC meeting #12; the architect committed to a 7-day response.",
+  "07-rfi-017-fire-penetration.md":"# RFI-017 — Fire-Rated Corridor Penetration Detail\n\nStatus: Open. The 2-hour rated corridor walls require sealed penetrations, but the specified assembly is only tested to 1-hour. This is BLOCKING the MEP rough-in inspection on Levels 1-3 — the inspector flagged the corridor penetrations as non-conforming. Until answered, firestopping and inspection cannot complete, holding up wall closure. Escalated at OAC #12; architect committed to respond within 7 days.",
+  "08-rfi-019-slab-elevation.md":"# RFI-019 — Imaging-Suite Slab Elevation Mismatch\n\nStatus: Open — critical path. Structural drawings show the imaging-suite slab at 100'-0\", but the MRI equipment requires a recessed slab at 99'-6\" for the magnet base and shielding. The slab cannot be placed until resolved, and slab placement gates MRI equipment rough-in (expanded under CO-003). A delayed answer pushes the imaging-suite sequence and substantial-completion forecast.",
+  "11-change-order-log.md":"# Change Order Log\n\nCO-001 Soil remediation +$420,000 / +12 days — Approved\nCO-002 Surgery HVAC HEPA upgrade +$285,000 / +0 — Approved\nCO-003 Added MRI electrical +$610,000 / +15 days — Approved\nCO-004 Curtain-wall substitution -$95,000 / +0 — Approved\nCO-005 Additional fireproofing +$78,000 / +5 days — Approved\nCO-006 Rooftop solar +$340,000 / +8 days — Pending\nCO-007 Winter conditions +$52,000 / +6 days — Pending\n\nApproved cost impact: +$1,298,000. Revised contract sum: $49,798,000. Pending: +$392,000 / +14 days.",
+  "12-co-003-mri-electrical.md":"# CO-003 — Added MRI Imaging-Room Electrical\n\nApproved. +$610,000 / +15 days. Owner-directed addition of a second MRI room: added electrical capacity, dedicated isolation panel, expanded conduit/feeders, magnet-room shielding coordination (Voltline Electric). Also the source of the RFI-019 slab-elevation conflict: the MRI base requires a recessed slab.",
+  "05-pay-application-06.md":"# Pay Application #6 (period ending Aug 31, 2025)\n\nOriginal contract sum: $48,500,000\nApproved change orders: +$1,298,000\nRevised contract sum: $49,798,000\nCompleted to date: $22,409,100 (~45%)\nRetainage (5%): $1,120,455\nCurrent payment due: $2,138,645",
+  "01-project-overview.md":"# Project Overview — Summit Ridge Medical Center\n\nNew 4-story, 120,000 SF medical office building with outpatient surgery center and imaging suite (incl. MRI). GC: Meridian Construction Group. Owner: Summit Health System. AIA A102 stipulated sum, $48.5M. NTP March 3, 2025. Contract substantial completion June 15, 2026. ~45% complete; structure topped out, MEP rough-in underway.",
+  "04-schedule-and-delays.md":"# Schedule and Delay Analysis\n\nContract substantial completion: June 15, 2026. Forecast: July 6, 2026 (~21 days late). Approved time extensions: CO-001 +12, CO-003 +15, CO-005 +5 (partly concurrent; net critical path ~21 days). Schedule-critical open items: RFI-019 (slab elevation), RFI-017 (fire penetration blocking inspection), SUB-042 (fire alarm overdue 21 days).",
+  "15-safety-incident-SAF-2025-07.md":"# Safety Incident — SAF-2025-07 (July 17, 2025)\n\nOSHA recordable: hand laceration, electrician (Voltline), no lost time. Cause: wrong glove type for a knife task. Corrective: require ANSI cut-level A4 gloves for blade tasks, retrain on safe cutting, add glove guidance to the safety plan. Only recordable injury year-to-date."
+};
+const sleep=(ms)=>new Promise(r=>setTimeout(r,ms));
+async function simulateQA(question, handle){
+  const d = DEMO_QA[question.trim().toLowerCase()] || DEMO_QA.default;
+  await sleep(420); handle({type:'sources',sources:d.sources}); await sleep(360);
+  for(const t of (d.answer.match(/\S+\s*/g)||[])){ handle({type:'token',token:t}); await sleep(24); }
+  handle({type:'done'});
+}
+async function simulateStrategy(directive, handle){
+  const sched = memory.some(m=>/rfi|slab|schedule|fire|sub-042/i.test(m.label+m.text));
+  const text = sched
+    ? "Schedule-recovery plan from the pinned records:\n\n1. Clear the two blocking RFIs first. RFI-017 holds the MEP inspection and wall closure; RFI-019 holds the imaging-suite slab on the critical path. Both have a 7-day architect commitment from OAC #12 — hold the architect to it and confirm in writing.\n2. Expedite SUB-042 (fire alarm), 21 days overdue with the architect, to protect procurement lead time.\n3. Re-sequence MEP crews into non-blocked areas (Levels where penetrations aren't held) to avoid idle labor while RFI-017 is open.\n4. Quantify exposure: approved change orders already added ~21 net critical-path days (forecast July 6, 2026 vs. June 15 contract). At $5,000/day liquidated damages, protecting against further slip matters — pursue time extensions in writing for any owner-driven delay.\n5. Escalate: ask the owner to act on pending CO-006/CO-007 so roof work isn't held.\n\nNeeds confirmation: latest architect response dates and the fire-alarm lead time aren't in the pinned records — pin those to sharpen the plan. (Demo output — start the API for a live LLM strategy over your pinned records.)"
+    : "From the pinned records:\n\n- Approved change orders total +$1,298,000, contract sum now $49,798,000; pending CO-006/CO-007 add $392,000.\n- Biggest open risks are the schedule-blocking RFIs and the overdue fire-alarm submittal.\n\nPin the RFI log, schedule, and change-order log together to get a sharper cost-and-schedule exposure summary. (Demo output — start the API for a live LLM strategy.)";
+  for(const t of (text.match(/\S+\s*/g)||[])){ handle({type:'token',token:t}); await sleep(16); }
+  handle({type:'done'});
+}
+
+// ---- health ----
+async function checkHealth(){
+  try{ const r=await fetch(`${API}/health`,{signal:AbortSignal.timeout(1200)}); const j=await r.json();
+    liveMode=true; el('status').className='status live'; el('statusText').textContent=`live · ${j.collection_size} chunks`;
+    el('modeNote').innerHTML='<b>mode</b> live API';
+  }catch(e){ liveMode=false; el('status').className='status demo'; el('statusText').textContent='demo mode';
+    el('modeNote').innerHTML='<b>mode</b> demo — run <span style="color:var(--teal)">make up</span> for live'; }
+}
+
+// ---- wiring ----
+el('chips').innerHTML = EXAMPLES.map(q=>`<span class="chip">${q}</span>`).join('');
+el('chips').querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{ el('q').value=c.textContent; ask(c.textContent); }));
+el('stratChips').innerHTML = STRAT_PRESETS.map(p=>`<span class="chip">${p}</span>`).join('');
+el('stratChips').querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{ el('directive').value=c.textContent; }));
+el('send').addEventListener('click',()=>ask(el('q').value));
+el('q').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); ask(el('q').value); }});
+el('q').addEventListener('input',e=>{ e.target.style.height='auto'; e.target.style.height=Math.min(160,e.target.scrollHeight)+'px'; });
+el('runStrat').addEventListener('click', runStrategy);
+renderMemory(); checkHealth();
+</script>
+</body>
+</html>
